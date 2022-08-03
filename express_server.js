@@ -18,6 +18,19 @@ function generateRandomString() {
   return result;
 };
 
+const findKeyByValue = function(object, value) {
+  let keyArray = Object.keys(object);
+  let output = "";
+  for (let key of keyArray) {
+    if (object[key] === value) {
+      output = key;
+    } else {
+      output = undefined;
+    }
+  }
+  return output;
+};
+
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
@@ -27,7 +40,6 @@ app.get("/", (req, res) => {
 app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
-
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
@@ -49,6 +61,7 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
+  console.log("urldatabase in new",urlDatabase);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -57,9 +70,23 @@ app.get("/urls/:id", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("OK");
+  let shortId = generateRandomString();
+  
+  if (!Object.values(urlDatabase).includes(req.body.longURL)) {
+    console.log("were");
+    urlDatabase[shortId] = req.body.longURL;
+    res.redirect(`/urls/${shortId}`);
+  } else {
+    let existId = findKeyByValue(urlDatabase, req.body.longURL);
+    res.redirect(`/urls/${existId}`);
+  }
+  
 });
+
+app.get("/u/:id", (req, res) => {
+  const longURL = req.body;
+  res.redirect(longURL);
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
