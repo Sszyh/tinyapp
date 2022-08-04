@@ -20,18 +20,30 @@
     <%- include('partials/_header') %>
     <main style="margin: 1em;">
       <h3>My URLs</h3>
+    
+   
+
       <table class="table">
         <thead>
           <tr>
             <th scope="col">Short URL ID</th>
             <th scope="col">Long URL</th>
+            <th scope="col">Delete</th>
           </tr>
         </thead>
         <tbody>
+          
           <% for (let id in urls) { %>
             <tr>
               <td><%= id %></td>
               <td><%= urls[id] %></td>
+              <td>
+                <form action="/urls/9sm5xK/delete" method="POST">
+                  <div class="form-group mb-2">
+                    <button type="delete" class="btn btn-outline-danger">Delete</button>
+                  </div>
+                </form>
+              </td>
             </tr>
           <% } %>
         </tbody>
