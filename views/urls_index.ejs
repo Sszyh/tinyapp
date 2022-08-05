@@ -36,9 +36,12 @@
               <td><%= id %></td><!-- <%= id %> is a way to calling the key id-->
               <td><%= urls[id] %></td>
               <td>
-                <form action="/urls/<%= id %>/edit" method="POST">
-                  <button type="edit" class="btn btn-outline-primary">Edit</button>
-                </form>
+              
+                  <a href="/urls/<%= id %>">
+                    <button type="edit" class="btn btn-outline-primary">Edit</button>
+                  </a>
+                  
+             
               </td>
               <td>
                 <form action="/urls/<%= id %>/delete" method="POST">
