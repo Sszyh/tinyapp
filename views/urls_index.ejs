@@ -31,10 +31,15 @@
         </thead>
         <tbody>
           
-          <% for (let id in urls) { %>
+          <% for (let id in urls) { %> 
             <tr>
               <td><%= id %></td><!-- <%= id %> is a way to calling the key id-->
               <td><%= urls[id] %></td>
+              <td>
+                <form action="/urls/<%= id %>/edit" method="POST">
+                  <button type="edit" class="btn btn-outline-primary">Edit</button>
+                </form>
+              </td>
               <td>
                 <form action="/urls/<%= id %>/delete" method="POST">
                   <button type="delete" class="btn btn-outline-danger">Delete</button>
