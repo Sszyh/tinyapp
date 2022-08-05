@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080;
 
+//tells the Express app to use EJS as its templating engine.
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -54,14 +55,17 @@ app.get("/fetch", (req, res) => {
   res.send(`a = ${a}`);
 });
 
-app.get("/urls", (req, res) => {
+app.get("/urls", (req, res) => {//app.get is a route hanlder
   const templateVars = { urls: urlDatabase };
-  res.render("urls_index", templateVars);
+  res.render("urls_index", templateVars);//use res.render() to pass the URL data to our template
+/*EJS automatically knows to look inside the views directory for any template files that have the extension .ejs. 
+This means we don't need to tell it where to find them. 
+It also means that we do not need to include the extension of the filename when referencing it.*/
 });
 
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
-  console.log("urldatabase in new",urlDatabase);
+  //console.log("urldatabase in new",urlDatabase);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -82,6 +86,12 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id/delete", (req, res) => {
   delete urlDatabase[req.params.id];
+  res.redirect(`/urls`);
+});
+
+app.post("/urls/:id", (req, res) => {
+  let id = req.params.id;
+  urlDatabase[id] = req.body.longURL;
   res.redirect(`/urls`);
 });
 
