@@ -17,7 +17,7 @@
     <title>TinyApp</title>
   </head>
   <body>
-    <%- include('partials/_header') %> <!-- ? -->
+    <%- include('partials/_header') %> 
     <main style="margin: 1em;">
       <h3>My URLs</h3>
       <table class="table">
@@ -36,12 +36,9 @@
               <td><%= id %></td><!-- <%= id %> is a way to calling the key id-->
               <td><%= urls[id] %></td>
               <td>
-              
-                  <a href="/urls/<%= id %>">
-                    <button type="edit" class="btn btn-outline-primary">Edit</button>
-                  </a>
-                  
-             
+                <a href="/urls/<%= id %>">
+                  <button type="edit" class="btn btn-outline-primary">Edit</button>
+                </a>
               </td>
               <td>
                 <form action="/urls/<%= id %>/delete" method="POST">
