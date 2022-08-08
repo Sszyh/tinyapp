@@ -22,7 +22,9 @@
     <%if (username) { %>
       <div class="navbar-nav">
         <p class="text-start">Logged in as: <%= username %></p>
-        <button type="logout" class="btn btn-outline-dark">Logout</button>
+        <form action="/logout" method="POST">
+        <button type="submit" class="btn btn-outline-dark">Logout</button>
+      </form>
       </div>
       <% } else {%> 
         <form class="form-inline" action="/login" method="POST">
