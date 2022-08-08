@@ -6,6 +6,11 @@ const PORT = 8080;
 //tells the Express app to use EJS as its templating engine.
 app.set("view engine", "ejs");
 app.use(cookieParser());
+
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}!`)
+});
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -124,6 +129,12 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
-app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`)
+app.get("/register", (req, res) => {
+  
+  const templateVars = { 
+    //id: req.params.id, 
+    //longURL: urlDatabase[req.params.id],
+    username: req.cookies["username"]
+  };
+  res.render("register", templateVars);
 });
