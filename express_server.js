@@ -107,11 +107,12 @@ app.post("/login", (req, res) => {
   let username = req.body.username;
   res.cookie("username", username);
   const templateVars = {
-    username: req.cookies["username"],
+    username: username,
     urls: urlDatabase
     // ... any other vars
   };
-  res.render("urls_index", templateVars);
+  console.log("us",templateVars["username"]);
+  // res.render("urls_index", templateVars);
   res.redirect(`/urls`);
 });
 
