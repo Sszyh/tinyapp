@@ -5,7 +5,7 @@ const PORT = 8080;
 
 //tells the Express app to use EJS as its templating engine.
 app.set("view engine", "ejs");
-
+app.use(cookieParser());
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -57,7 +57,10 @@ app.get("/fetch", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {//app.get is a route hanlder
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { 
+    urls: urlDatabase,
+    username: req.cookies["username"],
+  };
   res.render("urls_index", templateVars);//use res.render() to pass the URL data to our template
 /*EJS automatically knows to look inside the views directory for any template files that have the extension .ejs. 
 This means we don't need to tell it where to find them. 
@@ -65,7 +68,11 @@ It also means that we do not need to include the extension of the filename when 
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const templateVars = { 
+    //urls: urlDatabase,
+    username: req.cookies["username"],
+  };
+  res.render("urls_new", templateVars);
   //console.log("urldatabase in new",urlDatabase);
 });
 
@@ -99,6 +106,12 @@ app.post("/urls/:id", (req, res) => {
 app.post("/login", (req, res) => {
   let username = req.body.username;
   res.cookie("username", username);
+  const templateVars = {
+    username: req.cookies["username"],
+    urls: urlDatabase
+    // ... any other vars
+  };
+  res.render("urls_index", templateVars);
   res.redirect(`/urls`);
 });
 
