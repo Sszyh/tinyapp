@@ -106,13 +106,7 @@ app.post("/urls/:id", (req, res) => {
 app.post("/login", (req, res) => {
   let username = req.body.username;
   res.cookie("username", username);
-  const templateVars = {
-    username: username,
-    urls: urlDatabase
-    // ... any other vars
-  };
-  console.log("us",templateVars["username"]);
-  // res.render("urls_index", templateVars);
+  // delete all things adding here, the templateVar should be in app.get of all other pages.
   res.redirect(`/urls`);
 });
 
