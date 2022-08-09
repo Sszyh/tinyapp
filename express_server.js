@@ -6,6 +6,7 @@ const PORT = 8080;
 //tells the Express app to use EJS as its templating engine.
 app.set("view engine", "ejs");
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
@@ -40,7 +41,15 @@ const findKeyByValue = function(object, value) {
   return output;
 };
 
-app.use(express.urlencoded({ extended: true }));
+const getUserByEmail = function(email) {
+  for (let user in users) {
+    if (users[user].email === email) {
+      return true;
+    }
+  }
+  return false;
+}
+
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -142,12 +151,20 @@ app.post("/register", (req, res) => {
   let randomId = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
-  const userX = {
-    id: randomId,
-    email: email,
-    password: password
-  };
-  users[randomId] = userX;
   res.cookie("user_id", randomId);
-  res.redirect(`/urls`);
+
+  if (email.length === 0 || password.length === 0 ) {
+    res.status(400).send("input can not be empty");
+  } else if (getUserByEmail(email)) {
+    res.status(400).send("Email already registed");
+  } else {
+    const userX = {
+      id: randomId,
+      email: email,
+      password: password
+    };
+    users[randomId] = userX;
+    console.log("userafter:", users)
+    res.redirect(`/urls`);
+  }
 });
