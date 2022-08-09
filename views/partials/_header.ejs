@@ -19,6 +19,7 @@
       </div>
     </div>
 
+    
     <%if (user) { %>
       <div class="navbar-nav">
         <p class="text-start">Logged in as: <%= user.email %></p>
@@ -27,21 +28,14 @@
       </form>
       </div>
       <% } else {%> 
-        <form class="form-inline" action="/login" method="POST">
-          <div class="form-group mb-2">
-            
-            <input
-              class="form-control"
-              type="text"
-              name="username"
-              placeholder="Username"
-              style="width: 300px; margin: 1em"
-            />
-            <button type="submit" class="btn btn-outline-dark">Login</button>
-          </div>
-        </form>
+        <a href="/register">
+          <button type="submit" class="btn btn-success">Register</button>
+        </a>
+        <a href="/login">
+          <button type="submit" class="btn btn-success">Login</button>
+        </a>
+
       <% } %> 
-    </div>
 
   </nav>
 </header>
