@@ -66,7 +66,7 @@ app.get("/fetch", (req, res) => {
 app.get("/urls", (req, res) => {//app.get is a route hanlder
   const templateVars = { 
     urls: urlDatabase,
-    username: req.cookies["username"],
+    user: users[req.cookies["user_id"]]
   };
   res.render("urls_index", templateVars);//use res.render() to pass the URL data to our template
 /*EJS automatically knows to look inside the views directory for any template files that have the extension .ejs. 
@@ -76,8 +76,8 @@ It also means that we do not need to include the extension of the filename when 
 
 app.get("/urls/new", (req, res) => {
   const templateVars = { 
-    //urls: urlDatabase,
-    username: req.cookies["username"],
+    urls: urlDatabase,
+    user: users[req.cookies["user_id"]]
   };
   res.render("urls_new", templateVars);
   //console.log("urldatabase in new",urlDatabase);
@@ -87,7 +87,7 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = { 
     id: req.params.id, 
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render("urls_show", templateVars);
 });
@@ -133,9 +133,7 @@ app.get("/u/:id", (req, res) => {
 
 app.get("/register", (req, res) => {
   const templateVars = { 
-    //id: req.params.id, 
-    //longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"]
+    user: users[req.cookies["user_id"]]
   };
   res.render("register", templateVars);
 });
@@ -144,12 +142,12 @@ app.post("/register", (req, res) => {
   let randomId = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
-  const a = {
+  const userX = {
     id: randomId,
     email: email,
     password: password
   };
-  users[randomId] = a;
+  users[randomId] = userX;
   res.cookie("user_id", randomId);
   res.redirect(`/urls`);
 });
