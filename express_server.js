@@ -140,15 +140,22 @@ app.get("/login", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies["user_id"]]
   };
-  //console.log("cookies inside get login:",[req.cookies["user_id"]]);
-  res.render("urls_login", templateVars);
+  if (templateVars.user) {
+    res.redirect(`/urls`);
+  } else {
+    res.render("urls_login", templateVars);
+  }
 });
 
 app.get("/register", (req, res) => {
   const templateVars = { 
     user: users[req.cookies["user_id"]]
   };
-  res.render("urls_register", templateVars);
+  if (templateVars.user) {
+    res.redirect(`/urls`);
+  } else {
+    res.render("urls_register", templateVars);
+  }
 });
 
 app.post("/login", (req, res) => {
