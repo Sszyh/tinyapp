@@ -22,11 +22,11 @@
     <%if (user) { %>
       <form action="/logout" method="POST" class="form-inline">
         <div class="navbar-nav">
-          <label>Logged In As: <%= user.email %>!</label>
-       
-          <button type="submit" class="btn btn-outline-dark">Logout</button>
+          <label style="margin-right: 10px">Logged In As: <%= user.email %>!</label>
+          <button type="submit" class="btn btn-outline-dark margin-right ">Logout</button>
         </div>
       </form>
+      
     <% } else {%> 
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/login">Login</a>
