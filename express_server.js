@@ -17,7 +17,13 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = {};
+const users = {
+  userRandomID: {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur",
+  }
+};
 
 function generateRandomString() {
   const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -49,6 +55,27 @@ const getUserByEmail = function(email) {
     }
   }
   return false;
+}
+
+const checkPasswordByEmail = function(email, password) {
+  for (let user in users) {
+    if (users[user].email === email) {
+      if (users[user].password === password) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+const findIdByEmail = function(email) {
+  let output = "";
+  for (let user in users) {
+    if (users[user].email === email) {
+      output = user;
+    }
+  }
+  return output;
 }
 
 app.get("/", (req, res) => {
@@ -116,6 +143,7 @@ app.get("/login", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies["user_id"]]
   };
+  console.log("cookies inside get login:",[req.cookies["user_id"]]);
   res.render("urls_login", templateVars);
 });
 
@@ -127,17 +155,34 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  let username = req.body.username;
-  res.cookie("username", username);
-  // delete all things adding here, the templateVar should be in app.get of all other pages.
-  res.redirect(`/urls`);
+  let email = req.body.email;
+  let password = req.body.password;
+  if (!getUserByEmail(email)) {
+    return res.status(403).send("Email can not be found");
+  } 
+  if (getUserByEmail(email)) {
+    if (!checkPasswordByEmail(email, password)) {
+      return res.status(403).send("Password is wrong");
+    } else {
+      let userId = findIdByEmail(email);
+      console.log("userId",userId)
+      res.cookie("user_id", userId);
+      console.log("userbefore:", users);
+      res.redirect(`/urls`);
+    }
+  }
+  
+  // let username = req.body.username;
+  // res.cookie("user_id", username);
+  // // delete all things adding here, the templateVar should be in app.get of all other pages.
+  // res.redirect(`/urls`);
 });
 
 app.post("/register", (req, res) => {
   let randomId = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
-  res.cookie("user_id", randomId);
+  //
   console.log("userbefore:", users);
   if (email.length === 0 || password.length === 0 ) {
     res.status(400).send("input can not be empty");
@@ -150,12 +195,13 @@ app.post("/register", (req, res) => {
       password: password
     };
     users[randomId] = userX;
+    //res.cookie("user_id", randomId);
     console.log("userafter:", users);
     res.redirect(`/urls`);
   }
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect(`/urls`);
 });

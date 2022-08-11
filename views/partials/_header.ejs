@@ -21,12 +21,14 @@
 
     
     <%if (user) { %>
-      <div class="navbar-nav">
-        <p class="text-start">Logged in as: <%= user.email %></p>
-        <form action="/logout" method="POST">
-        <button type="submit" class="btn btn-outline-dark">Logout</button>
+          
+      <form action="/logout" method="POST" class="form-inline">
+        <div class="form-group form-inline">
+          <label>Logged In As: <%= user.email %></label>
+          <button type="submit" class="btn btn-outline-dark">Logout</button>
+        </div>
       </form>
-      </div>
+     
       <% } else {%> 
         <a href="/register">
           <button type="submit" class="btn btn-success">Register</button>
