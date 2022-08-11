@@ -46,7 +46,6 @@ const findKeyByValue = function(object, value) {
   }
   return output;
 };
-
 /*function to check if email already exist */
 const getUserByEmail = function(email) {
   for (let user in users) {
@@ -56,7 +55,7 @@ const getUserByEmail = function(email) {
   }
   return false;
 }
-
+/*function to check if password correct */
 const checkPasswordByEmail = function(email, password) {
   for (let user in users) {
     if (users[user].email === email) {
@@ -67,7 +66,7 @@ const checkPasswordByEmail = function(email, password) {
   }
   return false;
 }
-
+/*function to provide user's id by email */
 const findIdByEmail = function(email) {
   let output = "";
   for (let user in users) {
@@ -82,13 +81,12 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-
-app.get("/urls", (req, res) => {//app.get is a route hanlder
+app.get("/urls", (req, res) => {
   const templateVars = { 
     urls: urlDatabase,
     user: users[req.cookies["user_id"]]
   };
-  console.log("cookies inside get urls:",[req.cookies["user_id"]]);
+  //console.log("cookies inside get urls:",[req.cookies["user_id"]]);
   res.render("urls_index", templateVars);
 /*use res.render() to pass the URL data to our template.*/
 });
@@ -99,7 +97,6 @@ app.get("/urls/new", (req, res) => {
     user: users[req.cookies["user_id"]]
   };
   res.render("urls_new", templateVars);
-  //console.log("urldatabase in new",urlDatabase);
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -143,7 +140,7 @@ app.get("/login", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies["user_id"]]
   };
-  console.log("cookies inside get login:",[req.cookies["user_id"]]);
+  //console.log("cookies inside get login:",[req.cookies["user_id"]]);
   res.render("urls_login", templateVars);
 });
 
@@ -165,25 +162,19 @@ app.post("/login", (req, res) => {
       return res.status(403).send("Password is wrong");
     } else {
       let userId = findIdByEmail(email);
-      console.log("userId",userId)
+      //console.log("userId",userId)
       res.cookie("user_id", userId);
-      console.log("userbefore:", users);
+      //console.log("userbefore:", users);
       res.redirect(`/urls`);
     }
   }
-  
-  // let username = req.body.username;
-  // res.cookie("user_id", username);
-  // // delete all things adding here, the templateVar should be in app.get of all other pages.
-  // res.redirect(`/urls`);
 });
 
 app.post("/register", (req, res) => {
   let randomId = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
-  //
-  console.log("userbefore:", users);
+  //console.log("userbefore:", users);
   if (email.length === 0 || password.length === 0 ) {
     res.status(400).send("input can not be empty");
   } else if (getUserByEmail(email)) {
@@ -195,8 +186,7 @@ app.post("/register", (req, res) => {
       password: password
     };
     users[randomId] = userX;
-    //res.cookie("user_id", randomId);
-    console.log("userafter:", users);
+    //console.log("userafter:", users);
     res.redirect(`/urls`);
   }
 });
