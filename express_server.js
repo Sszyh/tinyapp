@@ -81,17 +81,36 @@ const findIdByEmail = function(email) {
   }
   return output;
 }
+/*function to return the URLs where the userID 
+is equal to the id of the currently loggined user */
+const urlsForUser = function(idOfCurrentUser) {
+  let output = {};
+  for (let id in urlDatabase) {
+    if (urlDatabase[id].userID === idOfCurrentUser) {
+      output[id] = urlDatabase[id].longURL;
+    }
+  }
+  return output;
+}
 
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
 app.get("/urls", (req, res) => {
+  let urlsUser = urlsForUser(req.cookies["user_id"]);
   const templateVars = { 
-    urls: urlDatabase,
+    urls: urlsUser,
     user: users[req.cookies["user_id"]]
   };
-  res.render("urls_index", templateVars);
+  if (!req.cookies["user_id"]) {
+    //res.status(403).send("You should login");
+    res.render("urls_index", templateVars);
+    //show a massage
+  } else {
+    res.render("urls_index", templateVars);
+  }
+  
 });
 
 app.get("/urls/new", (req, res) => {
