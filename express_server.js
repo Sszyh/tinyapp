@@ -12,11 +12,16 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
 });
 
+// const urlDatabase = {
+//   "b2xVn2": "http://www.lighthouselabs.ca",
+//   "9sm5xK": "http://www.google.com"
+// };
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
-
+  b6UTxQ: {
+    longURL: "https://www.tsn.ca",
+    userID: "aJ48lW",
+  },
+}
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -78,7 +83,6 @@ const findIdByEmail = function(email) {
 }
 
 app.get("/", (req, res) => {
-  console.log(req);
   res.send("Hello!");
 });
 
@@ -87,9 +91,7 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies["user_id"]]
   };
-  //console.log("cookies inside get urls:",[req.cookies["user_id"]]);
   res.render("urls_index", templateVars);
-/*use res.render() to pass the URL data to our template.*/
 });
 
 app.get("/urls/new", (req, res) => {
