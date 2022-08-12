@@ -107,9 +107,10 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
+  let id = req.params.id;
   const templateVars = { 
-    id: req.params.id, 
-    longURL: urlDatabase[req.params.id],
+    id: id, 
+    longURL: urlDatabase[id].longURL,
     user: users[req.cookies["user_id"]]
   };
   res.render("urls_show", templateVars);
@@ -117,11 +118,12 @@ app.get("/urls/:id", (req, res) => {
 
 app.get("/u/:id", (req, res) => {
   let id = req.params.id;
-  if (!(id in urlDatabase)) {
-    res.status(403).send("Shortened url does not exist")
-  }//is that kill the server?
-  const longURL = urlDatabase[req.params.id];
-  console.log(req.params.id)
+  console.log("longURL in /u/id", urlDatabase[id].longURL)
+  // if (!(id in urlDatabase)) {
+  //   res.status(403).send("Shortened url does not exist")
+  // }//is that kill the server?
+  const longURL = urlDatabase[id].longURL;
+  console.log("id in get u/:id",req.params.id)
   res.redirect(longURL);
 });
 
@@ -137,7 +139,11 @@ app.post("/urls", (req, res) => {
     console.log("login");
     let shortId = generateRandomString();
     if (!Object.values(urlDatabase).includes(req.body.longURL)) {
-      urlDatabase[shortId] = req.body.longURL;
+      let objInsideUrlDatabase = {};
+      objInsideUrlDatabase["longURL"] = req.body.longURL;
+      objInsideUrlDatabase["userID"] = req.cookies["user_id"];
+      urlDatabase[shortId] = objInsideUrlDatabase;
+     console.log("urls in posturls:",urlDatabase)
       res.redirect(`/urls/${shortId}`);
     } else {
       let existId = findKeyByValue(urlDatabase, req.body.longURL);
@@ -148,7 +154,7 @@ app.post("/urls", (req, res) => {
 
 app.post("/urls/:id", (req, res) => {
   let id = req.params.id;
-  urlDatabase[id] = req.body.longURL;
+  urlDatabase[id].longURL = req.body.longURL;
   res.redirect(`/urls`);
 });
 
