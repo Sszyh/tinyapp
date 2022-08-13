@@ -118,16 +118,6 @@ app.get("/urls/new", (req, res) => {
   }
   const templateVars = { urls,user };
   res.render("urls_new", templateVars);
-
-  // const templateVars = {
-  //   urls: urlDatabase,
-  //   user: users[req.cookies["user_id"]]
-  // };
-  // if (!templateVars.user) {
-  //   res.redirect(`/login`);
-  // } else {
-  //   res.render("urls_new", templateVars);
-  // }
 });
 
 app.get("/urls/:id", (req, res) => {
@@ -147,7 +137,7 @@ app.get("/u/:id", (req, res) => {
   let id = req.params.id;
   if (!(id in urlDatabase)) {
     return res.status(403).send("Shortened url does not exist")
-  }//is that kill the server?
+  }
   const longURL = urlDatabase[id].longURL;
   console.log("id in get u/:id", req.params.id)
   res.redirect(longURL);
@@ -169,29 +159,6 @@ app.post("/urls", (req, res) => {
   }
   let existId = findKeyByValue(urlDatabase, req.body.longURL);
   res.redirect(`/urls/${existId}`);
-
-  // const templateVars = {
-  //   urls: urlDatabase,
-  //   user: users[req.cookies["user_id"]]
-  // };
-  // if (!templateVars.user) {
-  //   console.log("did not login")
-  //   res.status(403).send("Please login");
-  // } else {
-  //   console.log("login");
-  //   let shortId = generateRandomString();
-  //   if (!Object.values(urlDatabase).includes(req.body.longURL)) {
-  //     let objInsideUrlDatabase = {};
-  //     objInsideUrlDatabase["longURL"] = req.body.longURL;
-  //     objInsideUrlDatabase["userID"] = req.cookies["user_id"];
-  //     urlDatabase[shortId] = objInsideUrlDatabase;
-  //     console.log("urls in posturls:", urlDatabase)
-  //     res.redirect(`/urls/${shortId}`);
-  //   } else {
-  //     let existId = findKeyByValue(urlDatabase, req.body.longURL);
-  //     res.redirect(`/urls/${existId}`);
-  //   }
-  // }
 });
 
 app.post("/urls/:id", (req, res) => {
@@ -213,16 +180,6 @@ app.get("/login", (req, res) => {
   }
   const templateVars = {urls, user};
   res.render("urls_login", templateVars)
-
-  // const templateVars = {
-  //   urls: urlDatabase,
-  //   user: users[req.cookies["user_id"]]
-  // };
-  // if (templateVars.user) {
-  //   res.redirect(`/urls`);
-  // } else {
-  //   res.render("urls_login", templateVars);
-  // }
 });
 
 app.get("/register", (req, res) => {
@@ -232,15 +189,6 @@ app.get("/register", (req, res) => {
   }
   const templateVars = { user };
   res.render("urls_register", templateVars);
-
-  // const templateVars = {
-  //   user: users[req.cookies["user_id"]]
-  // };
-  // if (templateVars.user) {
-  //   res.redirect(`/urls`);
-  // } else {
-  //   res.render("urls_register", templateVars);
-  // }
 });
 
 app.post("/login", (req, res) => {
