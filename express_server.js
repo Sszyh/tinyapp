@@ -39,7 +39,7 @@ function generateRandomString() {
   return result;
 };
 
-const findKeyByValue = function(object, value) {
+const findKeyByValue = function (object, value) {
   let keyArray = Object.keys(object);
   let output = "";
   for (let key of keyArray) {
@@ -52,7 +52,7 @@ const findKeyByValue = function(object, value) {
   return output;
 };
 /*function to check if email already exist */
-const getUserByEmail = function(email) {
+const getUserByEmail = function (email) {
   for (let user in users) {
     if (users[user].email === email) {
       return true;
@@ -61,7 +61,7 @@ const getUserByEmail = function(email) {
   return false;
 }
 /*function to check if password correct */
-const checkPasswordByEmail = function(email, password) {
+const checkPasswordByEmail = function (email, password) {
   for (let user in users) {
     if (users[user].email === email) {
       if (users[user].password === password) {
@@ -72,7 +72,7 @@ const checkPasswordByEmail = function(email, password) {
   return false;
 }
 /*function to provide user's id by email */
-const findIdByEmail = function(email) {
+const findIdByEmail = function (email) {
   let output = "";
   for (let user in users) {
     if (users[user].email === email) {
@@ -83,7 +83,7 @@ const findIdByEmail = function(email) {
 }
 /*function to return the URLs where the userID 
 is equal to the id of the currently loggined user */
-const urlsForUser = function(idOfCurrentUser) {
+const urlsForUser = function (idOfCurrentUser) {
   let output = {};
   for (let id in urlDatabase) {
     if (urlDatabase[id].userID === idOfCurrentUser) {
@@ -98,23 +98,20 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let urlsUser = urlsForUser(req.cookies["user_id"]);
-  const templateVars = { 
-    urls: urlsUser,
-    user: users[req.cookies["user_id"]]
-  };
-  if (!req.cookies["user_id"]) {
-    //res.status(403).send("You should login");
-    res.render("urls_index", templateVars);
-    //show a massage
-  } else {
-    res.render("urls_index", templateVars);
+  const userId = req.cookies["user_id"];
+  const user = users[userId];
+  if (!user) {
+    return res.status(403).send("You should login");
   }
-  
+
+  let urls = urlsForUser(req.cookies["user_id"]);
+  const templateVars = { urls,user };
+  res.render("urls_index", templateVars);
+
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies["user_id"]]
   };
@@ -126,13 +123,18 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  let id = req.params.id;
-  const templateVars = { 
-    id: id, 
-    longURL: urlDatabase[id].longURL,
-    user: users[req.cookies["user_id"]]
-  };
-  res.render("urls_show", templateVars);
+  if (!req.cookies["user_id"]) {
+    res.status(403).send("You should login")
+    //console.log("err")
+  } else {
+    let id = req.params.id;
+    const templateVars = {
+      id: id,
+      longURL: urlDatabase[id].longURL,
+      user: users[req.cookies["user_id"]]
+    };
+    res.render("urls_show", templateVars);
+  }
 });
 
 app.get("/u/:id", (req, res) => {
@@ -142,12 +144,12 @@ app.get("/u/:id", (req, res) => {
   //   res.status(403).send("Shortened url does not exist")
   // }//is that kill the server?
   const longURL = urlDatabase[id].longURL;
-  console.log("id in get u/:id",req.params.id)
+  console.log("id in get u/:id", req.params.id)
   res.redirect(longURL);
 });
 
 app.post("/urls", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies["user_id"]]
   };
@@ -162,7 +164,7 @@ app.post("/urls", (req, res) => {
       objInsideUrlDatabase["longURL"] = req.body.longURL;
       objInsideUrlDatabase["userID"] = req.cookies["user_id"];
       urlDatabase[shortId] = objInsideUrlDatabase;
-     console.log("urls in posturls:",urlDatabase)
+      console.log("urls in posturls:", urlDatabase)
       res.redirect(`/urls/${shortId}`);
     } else {
       let existId = findKeyByValue(urlDatabase, req.body.longURL);
@@ -183,7 +185,7 @@ app.post("/urls/:id/delete", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     urls: urlDatabase,
     user: users[req.cookies["user_id"]]
   };
@@ -195,7 +197,7 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = { 
+  const templateVars = {
     user: users[req.cookies["user_id"]]
   };
   if (templateVars.user) {
@@ -210,7 +212,7 @@ app.post("/login", (req, res) => {
   let password = req.body.password;
   if (!getUserByEmail(email)) {
     return res.status(403).send("Email can not be found");
-  } 
+  }
   if (getUserByEmail(email)) {
     if (!checkPasswordByEmail(email, password)) {
       return res.status(403).send("Password is wrong");
@@ -229,7 +231,7 @@ app.post("/register", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   //console.log("userbefore:", users);
-  if (email.length === 0 || password.length === 0 ) {
+  if (email.length === 0 || password.length === 0) {
     res.status(400).send("input can not be empty");
   } else if (getUserByEmail(email)) {
     res.status(400).send("Email already registed");
