@@ -162,12 +162,35 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:id", (req, res) => {
-  let id = req.params.id;
+  const id = req.params.id;
+  const user = users[req.cookies["user_id"]];
+  const urls =  urlsForUser(req.cookies["user_id"]);
+  if (!id) {
+    return res.status(403).send("Id does not exist-(curl)");
+  }
+  if (!user) {
+    return res.status(403).send("User is not logged in-(curl)");
+  }
+  if (!(id in urls)) {
+    return res.status(403).send("User does not own the URL-(curl)");
+  }
   urlDatabase[id].longURL = req.body.longURL;
   res.redirect(`/urls`);
 });
 
 app.post("/urls/:id/delete", (req, res) => {
+  const id = req.params.id;
+  const user = users[req.cookies["user_id"]];
+  const urls =  urlsForUser(req.cookies["user_id"]);
+  if (!id) {
+    return res.status(403).send("Id does not exist-(curl)");
+  }
+  if (!user) {
+    return res.status(403).send("User is not logged in-(curl)");
+  }
+  if (!(id in urls)) {
+    return res.status(403).send("User does not own the URL-(curl)");
+  }
   delete urlDatabase[req.params.id];
   res.redirect(`/urls`);
 });
