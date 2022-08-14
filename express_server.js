@@ -2,7 +2,7 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const app = express();
 const PORT = 8080;
-
+const bcrypt = require("bcryptjs");
 /*tells the Express app to use EJS as its templating engine.*/
 app.set("view engine", "ejs");
 app.use(cookieParser());
@@ -64,9 +64,8 @@ const getUserByEmail = function (email) {
 const checkPasswordByEmail = function (email, password) {
   for (let user in users) {
     if (users[user].email === email) {
-      if (users[user].password === password) {
-        return true;
-      }
+      let hashedPassword = users[user].password;
+      return bcrypt.compareSync(password, hashedPassword);
     }
   }
   return false;
@@ -103,11 +102,9 @@ app.get("/urls", (req, res) => {
   if (!user) {
     return res.status(403).send("You should login");
   }
-
   let urls = urlsForUser(req.cookies["user_id"]);
   const templateVars = { urls,user };
   res.render("urls_index", templateVars);
-
 });
 
 app.get("/urls/new", (req, res) => {
@@ -139,7 +136,6 @@ app.get("/u/:id", (req, res) => {
     return res.status(403).send("Shortened url does not exist")
   }
   const longURL = urlDatabase[id].longURL;
-  console.log("id in get u/:id", req.params.id)
   res.redirect(longURL);
 });
 
@@ -240,10 +236,11 @@ app.post("/register", (req, res) => {
   if (getUserByEmail(email)) {
     return res.status(400).send("Email already registed");
   } 
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const userX = {
     id: randomId,
     email: email,
-    password: password
+    password: hashedPassword
   };
   users[randomId] = userX;
   res.redirect(`/urls`);
