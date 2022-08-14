@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 /*tells the Express app to use EJS as its templating engine.*/
 app.set("view engine", "ejs");
 app.use(cookieSession({
-  name: 'Ss',
+  name: 'user_name',
   keys: ['key1','key2']
 }));
 app.use(express.urlencoded({ extended: true }));
@@ -55,9 +55,9 @@ const findKeyByValue = function (object, value) {
   return output;
 };
 /*function to check if email already exist */
-const getUserByEmail = function (email) {
-  for (let user in users) {
-    if (users[user].email === email) {
+const getUserByEmail = function (email, database) {
+  for (let user in database) {
+    if (database[user].email === email) {
       return true;
     }
   }
@@ -216,10 +216,10 @@ app.get("/register", (req, res) => {
 app.post("/login", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
-  if (!getUserByEmail(email)) {
+  if (!getUserByEmail(email, users)) {
     return res.status(403).send("Email can not be found");
   }
-  if (getUserByEmail(email)) {
+  if (getUserByEmail(email, users)) {
     if (!checkPasswordByEmail(email, password)) {
       return res.status(403).send("Password is wrong");
     } 
@@ -236,7 +236,7 @@ app.post("/register", (req, res) => {
   if (email.length === 0 || password.length === 0) {
     return res.status(400).send("input can not be empty");
   } 
-  if (getUserByEmail(email)) {
+  if (getUserByEmail(email, users)) {
     return res.status(400).send("Email already registed");
   } 
   const hashedPassword = bcrypt.hashSync(password, 10);
@@ -250,6 +250,6 @@ app.post("/register", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect(`/urls`);
 });
