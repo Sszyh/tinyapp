@@ -3,6 +3,7 @@ const cookieSession = require("cookie-session");
 const app = express();
 const PORT = 8080;
 const bcrypt = require("bcryptjs");
+const { getUserByEmail } = require("./helpers");
 /*tells the Express app to use EJS as its templating engine.*/
 app.set("view engine", "ejs");
 app.use(cookieSession({
@@ -54,15 +55,7 @@ const findKeyByValue = function (object, value) {
   }
   return output;
 };
-/*function to check if email already exist */
-const getUserByEmail = function (email, database) {
-  for (let user in database) {
-    if (database[user].email === email) {
-      return true;
-    }
-  }
-  return false;
-}
+
 /*function to check if password correct */
 const checkPasswordByEmail = function (email, password) {
   for (let user in users) {
