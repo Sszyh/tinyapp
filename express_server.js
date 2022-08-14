@@ -3,7 +3,15 @@ const cookieSession = require("cookie-session");
 const app = express();
 const PORT = 8080;
 const bcrypt = require("bcryptjs");
-const { getUserByEmail } = require("./helpers");
+const { 
+  getUserByEmail, 
+  generateRandomString,
+  findKeyByValue,
+  checkPasswordByEmail,
+  findIdByEmail,
+  urlsForUser
+} = require("./helpers");
+
 /*tells the Express app to use EJS as its templating engine.*/
 app.set("view engine", "ejs");
 app.use(cookieSession({
@@ -16,10 +24,6 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
 });
 
-// const urlDatabase = {
-//   "b2xVn2": "http://www.lighthouselabs.ca",
-//   "9sm5xK": "http://www.google.com"
-// };
 const urlDatabase = {
   b6UTxQ: {
     longURL: "https://www.tsn.ca",
@@ -34,60 +38,6 @@ const users = {
   }
 };
 
-function generateRandomString() {
-  const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < 6; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  };
-  return result;
-};
-
-const findKeyByValue = function (object, value) {
-  let keyArray = Object.keys(object);
-  let output = "";
-  for (let key of keyArray) {
-    if (object[key] === value) {
-      output = key;
-    } else {
-      output = undefined;
-    }
-  }
-  return output;
-};
-
-/*function to check if password correct */
-const checkPasswordByEmail = function (email, password) {
-  for (let user in users) {
-    if (users[user].email === email) {
-      let hashedPassword = users[user].password;
-      return bcrypt.compareSync(password, hashedPassword);
-    }
-  }
-  return false;
-}
-/*function to provide user's id by email */
-const findIdByEmail = function (email) {
-  let output = "";
-  for (let user in users) {
-    if (users[user].email === email) {
-      output = user;
-    }
-  }
-  return output;
-}
-/*function to return the URLs where the userID 
-is equal to the id of the currently loggined user */
-const urlsForUser = function (idOfCurrentUser) {
-  let output = {};
-  for (let id in urlDatabase) {
-    if (urlDatabase[id].userID === idOfCurrentUser) {
-      output[id] = urlDatabase[id].longURL;
-    }
-  }
-  return output;
-}
-
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -98,7 +48,7 @@ app.get("/urls", (req, res) => {
   if (!user) {
     return res.status(403).send("You should login");
   }
-  let urls = urlsForUser(req.session.user_id);
+  let urls = urlsForUser(req.session.user_id, urlDatabase);
   const templateVars = { urls,user };
   res.render("urls_index", templateVars);
 });
@@ -156,7 +106,7 @@ app.post("/urls", (req, res) => {
 app.post("/urls/:id", (req, res) => {
   const id = req.params.id;
   const user = users[req.session.user_id];
-  const urls =  urlsForUser(req.session.user_id);
+  const urls =  urlsForUser(req.session.user_id, urlDatabase);
   if (!id) {
     return res.status(403).send("Id does not exist-(curl)");
   }
@@ -173,7 +123,7 @@ app.post("/urls/:id", (req, res) => {
 app.post("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
   const user = users[req.session.user_id];
-  const urls =  urlsForUser(req.session.user_id);
+  const urls =  urlsForUser(req.session.user_id, urlDatabase);
   if (!id) {
     return res.status(403).send("Id does not exist-(curl)");
   }
@@ -213,10 +163,10 @@ app.post("/login", (req, res) => {
     return res.status(403).send("Email can not be found");
   }
   if (getUserByEmail(email, users)) {
-    if (!checkPasswordByEmail(email, password)) {
+    if (!checkPasswordByEmail(email, password, users)) {
       return res.status(403).send("Password is wrong");
     } 
-    let userId = findIdByEmail(email);
+    let userId = findIdByEmail(email, users);
     req.session.user_id = userId;
     res.redirect(`/urls`);
   }
