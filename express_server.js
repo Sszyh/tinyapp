@@ -74,7 +74,9 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:id", (req, res) => {
   let id = req.params.id;
-  let user = users[req.session.user_id]
+  let user = users[req.session.user_id];
+  // let a = req.session.total = req.session.total+1;
+  // a++;
   if (!(id in urlDatabase)) {
     return res.status(403).send("This ID does not exist");
   }
@@ -90,7 +92,8 @@ app.get("/urls/:id", (req, res) => {
   const templateVars = {
     id: id,
     longURL: urlDatabase[id].longURL,
-    user: user
+    user: user,
+    //total: a
   };
   res.render("urls_show", templateVars);
 });
@@ -196,7 +199,7 @@ app.post("/register", (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   if (email.length === 0 || password.length === 0) {
-    return res.status(400).send("input can not be empty");
+    return res.status(400).send("Email and Password can not be empty");
   } 
   if (getUserByEmail(email, users)) {
     return res.status(400).send("Email already registed");
