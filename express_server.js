@@ -75,8 +75,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:id", (req, res) => {
   let id = req.params.id;
   let user = users[req.session.user_id];
-  // let a = req.session.total = req.session.total+1;
-  // a++;
+  
   if (!(id in urlDatabase)) {
     return res.status(403).send("This ID does not exist");
   }
@@ -93,16 +92,18 @@ app.get("/urls/:id", (req, res) => {
     id: id,
     longURL: urlDatabase[id].longURL,
     user: user,
-    //total: a
+    total: a
   };
   res.render("urls_show", templateVars);
 });
 
+let a = 0
 app.get("/u/:id", (req, res) => {
   let id = req.params.id;
   if (!(id in urlDatabase)) {
     return res.status(403).send("Shortened url does not exist");
   }
+  a++;
   const longURL = urlDatabase[id].longURL;
   res.redirect(longURL);
 });
