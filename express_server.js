@@ -20,7 +20,6 @@ app.use(cookieSession({
   keys: ['key1','key2']
 }));
 app.use(express.urlencoded({ extended: true }));
-//app.use(methodOverride('X-HTTP-Method-Override'));
 app.use(methodOverride('_method'));
 
 app.listen(PORT, () => {
@@ -40,7 +39,7 @@ const users = {
     password: "purple-monkey-dinosaur",
   }
 };
-
+/*all routes start here*/
 app.get("/", (req, res) => {
   const user = users[req.session.user_id];
   if (user) {
@@ -92,12 +91,14 @@ app.get("/urls/:id", (req, res) => {
     id: id,
     longURL: urlDatabase[id].longURL,
     user: user,
-    total: a
+    total: a,
+    time: urlDatabase[id].createTime
   };
   res.render("urls_show", templateVars);
 });
 
-let a = 0
+//set a global variable to read visits.
+let a = 0;
 app.get("/u/:id", (req, res) => {
   let id = req.params.id;
   if (!(id in urlDatabase)) {
@@ -108,6 +109,7 @@ app.get("/u/:id", (req, res) => {
   res.redirect(longURL);
 });
 
+//let createTime = "";
 app.post("/urls", (req, res) => {
   const urls = urlDatabase;
   const user = users[req.session.user_id];
@@ -119,6 +121,7 @@ app.post("/urls", (req, res) => {
     let objInsideUrlDatabase = {};
     objInsideUrlDatabase["longURL"] = req.body.longURL;
     objInsideUrlDatabase["userID"] = req.session.user_id;
+    objInsideUrlDatabase["createTime"] = Date();
     urlDatabase[shortId] = objInsideUrlDatabase;
     return res.redirect(`/urls/${shortId}`);
   }
