@@ -42,7 +42,6 @@ const users = {
 };
 
 app.get("/", (req, res) => {
-  const urls = urlDatabase;
   const user = users[req.session.user_id];
   if (user) {
     res.redirect(`/urls`);
@@ -74,14 +73,24 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
-  if (!req.session.user_id) {
-    return res.status(403).send("You should login");
-  } 
   let id = req.params.id;
+  let user = users[req.session.user_id]
+  if (!(id in urlDatabase)) {
+    return res.status(403).send("This ID does not exist");
+  }
+  if (!user) {
+    return res.status(403).send("You should login to manage your URLs");
+  } 
+  if (user) {
+    let urlsForCurrentUser = urlsForUser(user.id, urlDatabase);
+    if (!(id in urlsForCurrentUser)) {
+      return res.status(403).send("This shorten ID is not owned by you");
+    }
+  }
   const templateVars = {
     id: id,
     longURL: urlDatabase[id].longURL,
-    user: users[req.session.user_id]
+    user: user
   };
   res.render("urls_show", templateVars);
 });
@@ -199,7 +208,14 @@ app.post("/register", (req, res) => {
     password: hashedPassword
   };
   users[randomId] = userX;
-  res.redirect(`/urls`);
+  if (getUserByEmail(email, users)) {
+    if (!checkPasswordByEmail(email, password, users)) {
+      return res.status(403).send("Password is wrong");
+    } 
+    let userId = findIdByEmail(email, users);
+    req.session.user_id = userId;
+    res.redirect(`/urls`);
+  }
 });
 
 app.post("/logout", (req, res) => {
