@@ -41,8 +41,8 @@
                 </a>
               </td>
               <td>
-                <form action="/urls/<%= id %>/delete" method="POST">
-                  <button type="delete" class="btn btn-outline-danger">Delete</button>
+                <form action="/urls/<%= id %>/delete?_method=DELETE" method="POST">
+                  <button type="submit" class="btn btn-outline-danger">Delete</button>
                 </form>
               </td>
             </tr>

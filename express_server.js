@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieSession = require("cookie-session");
+const methodOverride = require('method-override');
 const app = express();
 const PORT = 8080;
 const bcrypt = require("bcryptjs");
@@ -19,6 +20,8 @@ app.use(cookieSession({
   keys: ['key1','key2']
 }));
 app.use(express.urlencoded({ extended: true }));
+//app.use(methodOverride('X-HTTP-Method-Override'));
+app.use(methodOverride('_method'))
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`)
@@ -103,7 +106,7 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${existId}`);
 });
 
-app.post("/urls/:id", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   const id = req.params.id;
   const user = users[req.session.user_id];
   const urls =  urlsForUser(req.session.user_id, urlDatabase);
@@ -120,7 +123,7 @@ app.post("/urls/:id", (req, res) => {
   res.redirect(`/urls`);
 });
 
-app.post("/urls/:id/delete", (req, res) => {
+app.delete("/urls/:id/delete", (req, res) => {
   const id = req.params.id;
   const user = users[req.session.user_id];
   const urls =  urlsForUser(req.session.user_id, urlDatabase);
