@@ -13,13 +13,13 @@ const testUsers = {
   }
 };
 
-describe('#getUserByEmail',() => {
+describe('#getUserByEmail', () => {
   it('shoule return a true if email is valid', () => {
     const user = getUserByEmail('user@example.com', testUsers);
     assert.strictEqual(user, true);
   });
   it('should return false if emial is not in our users database', () => {
-    const user = getUserByEmail('x@x',testUsers);
+    const user = getUserByEmail('x@x', testUsers);
     assert.strictEqual(user, false);
   });
 });
@@ -27,24 +27,24 @@ describe('#getUserByEmail',() => {
 describe("#findKeyByValue", () => {
   it("return 'drama' for 'The Wire'", () => {
     const bestTVShowsByGenre = {
-    sci_fi: "The Expanse",
-    comedy: "Brooklyn Nine-Nine",
-    drama:  "The Wire"
+      sci_fi: "The Expanse",
+      comedy: "Brooklyn Nine-Nine",
+      drama: "The Wire"
     };
     assert.deepEqual(findKeyByValue(bestTVShowsByGenre, "The Wire"), "drama");
   });
 
   it("return 'undefined' for 'That '70s Show'", () => {
     const bestTVShowsByGenre = {
-    sci_fi: "The Expanse",
-    comedy: "Brooklyn Nine-Nine",
-    drama:  "The Wire"
+      sci_fi: "The Expanse",
+      comedy: "Brooklyn Nine-Nine",
+      drama: "The Wire"
     };
     assert.deepEqual(findKeyByValue(bestTVShowsByGenre, "That '70s Show"), undefined);
   });
 });
 
-describe('#findIdByEmail',() => {
+describe('#findIdByEmail', () => {
   it('shoule return a userID by email', () => {
     const users = {
       userRandomID: {

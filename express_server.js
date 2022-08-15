@@ -4,8 +4,8 @@ const methodOverride = require('method-override');
 const app = express();
 const PORT = 8080;
 const bcrypt = require("bcryptjs");
-const { 
-  getUserByEmail, 
+const {
+  getUserByEmail,
   generateRandomString,
   findKeyByValue,
   checkPasswordByEmail,
@@ -21,10 +21,10 @@ app.use(cookieSession({
 }));
 app.use(express.urlencoded({ extended: true }));
 //app.use(methodOverride('X-HTTP-Method-Override'));
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`)
+  console.log(`Example app listening on port ${PORT}!`);
 });
 
 const urlDatabase = {
@@ -32,7 +32,7 @@ const urlDatabase = {
     longURL: "https://www.tsn.ca",
     userID: "aJ48lW",
   },
-}
+};
 const users = {
   userRandomID: {
     id: "userRandomID",
@@ -82,7 +82,7 @@ app.get("/urls/:id", (req, res) => {
   }
   if (!user) {
     return res.status(403).send("You should login to manage your URLs");
-  } 
+  }
   if (user) {
     let urlsForCurrentUser = urlsForUser(user.id, urlDatabase);
     if (!(id in urlsForCurrentUser)) {
@@ -101,7 +101,7 @@ app.get("/urls/:id", (req, res) => {
 app.get("/u/:id", (req, res) => {
   let id = req.params.id;
   if (!(id in urlDatabase)) {
-    return res.status(403).send("Shortened url does not exist")
+    return res.status(403).send("Shortened url does not exist");
   }
   const longURL = urlDatabase[id].longURL;
   res.redirect(longURL);
@@ -113,7 +113,7 @@ app.post("/urls", (req, res) => {
   let shortId = generateRandomString();
   if (!user) {
     return res.status(403).send("Please login");
-  };
+  }
   if (!(Object.values(urls).includes(req.body.longURL))) {
     let objInsideUrlDatabase = {};
     objInsideUrlDatabase["longURL"] = req.body.longURL;
@@ -166,7 +166,7 @@ app.get("/login", (req, res) => {
     return res.redirect(`/urls`);
   }
   const templateVars = {urls, user};
-  res.render("urls_login", templateVars)
+  res.render("urls_login", templateVars);
 });
 
 app.get("/register", (req, res) => {
@@ -187,7 +187,7 @@ app.post("/login", (req, res) => {
   if (getUserByEmail(email, users)) {
     if (!checkPasswordByEmail(email, password, users)) {
       return res.status(403).send("Password is wrong");
-    } 
+    }
     let userId = findIdByEmail(email, users);
     req.session.user_id = userId;
     res.redirect(`/urls`);
@@ -200,10 +200,10 @@ app.post("/register", (req, res) => {
   let password = req.body.password;
   if (email.length === 0 || password.length === 0) {
     return res.status(400).send("Email and Password can not be empty");
-  } 
+  }
   if (getUserByEmail(email, users)) {
     return res.status(400).send("Email already registed");
-  } 
+  }
   const hashedPassword = bcrypt.hashSync(password, 10);
   const userX = {
     id: randomId,
@@ -214,7 +214,7 @@ app.post("/register", (req, res) => {
   if (getUserByEmail(email, users)) {
     if (!checkPasswordByEmail(email, password, users)) {
       return res.status(403).send("Password is wrong");
-    } 
+    }
     let userId = findIdByEmail(email, users);
     req.session.user_id = userId;
     res.redirect(`/urls`);
