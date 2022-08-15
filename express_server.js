@@ -42,7 +42,14 @@ const users = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const urls = urlDatabase;
+  const user = users[req.session.user_id];
+  if (user) {
+    res.redirect(`/urls`);
+  }
+  if (!user) {
+    res.redirect(`login`);
+  }
 });
 
 app.get("/urls", (req, res) => {
