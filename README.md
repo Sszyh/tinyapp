@@ -19,6 +19,8 @@
 ### Urls page
 !["urls page"](./screenShot/createNewLink.png)
 ****
+### Show page
+!["show page"](./screenShot/analytic.png)
 
 
 ## Dependencies
